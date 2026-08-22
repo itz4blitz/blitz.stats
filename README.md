@@ -1,5 +1,7 @@
 # blitz.stats
 
+![blitz.stats](screenshot.png)
+
 Omarchy bar chip for CPU, RAM, disk, GPU, and network. Values come from local `/proc` and `nvidia-smi` when present.
 
 ```bash
