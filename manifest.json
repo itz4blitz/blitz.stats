@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "blitz.stats",
+  "name": "System Stats",
+  "version": "1.0.0",
+  "author": "blitz",
+  "description": "CPU, RAM, disk, and network link stats with mini bar graphs",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "System Stats",
+    "description": "CPU usage and temp, RAM, disk, network link capacity",
+    "category": "System",
+    "allowMultiple": false
+  }
+}
