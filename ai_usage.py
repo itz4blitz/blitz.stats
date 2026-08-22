@@ -969,7 +969,47 @@ def _discover(home: Path) -> list[Any]:
     return discover_local_accounts(home=home)
 
 
+def demo_view() -> str:
+    flag = Path(__file__).resolve().parent / "DEMO"
+    try:
+        if flag.is_file():
+            return flag.read_text(encoding="utf-8").strip() or "claude"
+    except OSError:
+        pass
+    return ""
+
+
+def demo_providers() -> list[dict[str, Any]]:
+    def rec(pid, name, session, weekly, tokens, sessions, extra=None):
+        row = {
+            "schemaVersion": 2, "id": pid, "icon": provider_icon(pid), "name": name,
+            "tierLabel": "Pro", "statusText": "Live quota", "authHelpText": "",
+            "ready": True, "status": "ok", "updatedAt": "",
+            "limits": [
+                {"kind": "session", "label": "Session (5-hour)", "percent": session, "resetsAt": "2026-01-01T03:12:00+00:00"},
+                {"kind": "weekly", "label": "Weekly", "percent": weekly, "resetsAt": "2026-01-05T00:00:00+00:00"},
+            ],
+            "today": {"prompts": 12, "sessions": sessions, "tokens": tokens},
+            "recentDays": [], "modelUsage": {}, "balance": extra,
+            "source": {"local": True, "authoritative": True},
+        }
+        return row
+
+    return [
+        rec("codex", "Codex", 0.32, 0.48, 800000, 3),
+        rec("claude", "Claude", 0.18, 0.41, 1200000, 4),
+        rec("zai", "Z.ai / GLM", 0.41, 0.22, 410000, 2),
+        rec("grok", "Grok", 0.07, 0.19, 220000, 2),
+        rec("openrouter", "OpenRouter", 0.22, 0.35, 90000, 1, {"usageWeekly": 4.2, "usageMonthly": 12.5, "limit": 20, "remaining": 7.5}),
+        rec("cursor", "Cursor", 0.55, 0.61, 1500000, 6),
+    ]
+
+
 def main() -> int:
+    view = demo_view()
+    if view:
+        print(json.dumps({"demo": True, "demoView": view, "providers": demo_providers()}))
+        return 0
     print(json.dumps({"providers": collect_records()}))
     return 0
 

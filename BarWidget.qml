@@ -107,6 +107,7 @@ BarWidget {
     if (d.txBytesPerSec !== undefined) txRate = d.txBytesPerSec || 0
     if (d.gpuPct !== undefined) gpuPct = d.gpuPct === null ? -1 : d.gpuPct
     if (d.gpuTempC !== undefined && d.gpuTempC !== null) gpuTempC = d.gpuTempC
+    if (d.demo) { demoLock = true; cardOpen = true }
   }
 
   function refresh() {
@@ -347,6 +348,7 @@ BarWidget {
   // Hover dropdown -----------------------------------------------------------
 
   property bool cardOpen: false
+  property bool demoLock: false
 
   // Dwell before opening so a passing cursor doesn't flash the card; short
   // grace before closing so micro-gaps between widget and card don't snap it.
@@ -363,7 +365,7 @@ BarWidget {
     interval: 150
     repeat: false
     running: !button.tooltipHovered && !statsCard.containsMouse && root.cardOpen
-    onTriggered: if (!button.tooltipHovered && !statsCard.containsMouse) root.cardOpen = false
+    onTriggered: if (!root.demoLock && !button.tooltipHovered && !statsCard.containsMouse) root.cardOpen = false
   }
 
   component StatsRow : Item {

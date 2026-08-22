@@ -179,10 +179,35 @@ SECTIONS = {
 }
 
 
+def demo_view() -> str:
+    flag = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DEMO")
+    try:
+        if os.path.isfile(flag):
+            text = open(flag, encoding="utf-8").read().strip()
+            return text or "default"
+    except OSError:
+        pass
+    return ""
+
+
+def emit_demo(section: str) -> None:
+    payloads = {
+        "fast": {"demo": True, "cpu": 34, "memPct": 61, "memUsedGB": 10.0, "memTotalGB": 16.0, "iface": "eth0", "rxBytesPerSec": 122880, "txBytesPerSec": 18432},
+        "temp": {"demo": True, "tempC": 52},
+        "disk": {"demo": True, "diskPct": 44, "diskUsedGB": 220.0, "diskTotalGB": 512.0},
+        "net": {"demo": True, "iface": "eth0", "mbps": 1000},
+        "gpu": {"demo": True, "gpuPct": 18, "gpuTempC": 41},
+    }
+    emit(payloads[section])
+
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in SECTIONS:
         print(f"usage: {sys.argv[0]} <{'|'.join(SECTIONS)}>", file=sys.stderr)
         return 2
+    if demo_view() and sys.argv[1] in ("fast", "temp", "disk", "net", "gpu"):
+        emit_demo(sys.argv[1])
+        return 0
     try:
         SECTIONS[sys.argv[1]]()
     except Exception as exc:  # a dead widget section must never hang the bar

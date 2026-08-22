@@ -4,3 +4,4 @@ __pycache__/
 secrets.json
 .pytest_cache/
 .coverage
+DEMO
