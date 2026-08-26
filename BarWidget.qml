@@ -79,8 +79,17 @@ BarWidget {
   }
 
   function rateFillPct(bytesPerSec) {
+    // Log scale vs the link: a 1 Gb link makes idle browsing (~0.05% of
+    // capacity) an invisible sliver on a linear bar. Mapping octaves of
+    // rate to height keeps the bars readable from 1 KB/s to line rate.
     if (!netMbps) return 0
-    return Math.min(100, Math.round(bytesPerSec * 8 / (netMbps * 1000000) * 100))
+    var bits = Math.max(0, bytesPerSec) * 8
+    var floorBits = 1000 // 1 Kb/s reads as empty
+    var ceilingBits = netMbps * 1000000
+    if (bits <= floorBits) return 0
+    if (bits >= ceilingBits) return 100
+    var pct = 100 * (Math.log(bits / floorBits) / Math.log(ceilingBits / floorBits))
+    return Math.min(100, Math.max(1, Math.round(pct)))
   }
 
   function sizeText(gb) {
